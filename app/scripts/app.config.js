@@ -6,6 +6,7 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider) {
     templateUrl: '/views/main.html'
   }).state('register', {
     url: '/register',
-    templateUrl: '/views/register.html'
+    templateUrl: '/views/register.html',
+    controller: 'RegisterCtrl'
   });
 });
