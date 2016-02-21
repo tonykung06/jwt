@@ -12,7 +12,7 @@ angular.module('jwtApp').controller('LoginCtrl', function($scope, alert, auth) {
     auth.login($scope.email, $scope.password).success(function(res) {
       alert('success', 'Welcome', 'Thanks for coming back ' +res.user.email + '!');
     }).error(function(err) {
-      alert('warning', 'Opps!', err.message);
+      alert('warning', 'Opps!', err.message || 'login failed');
     });
   };
 });

@@ -4,11 +4,84 @@ var mongoose = require('mongoose');
 var User = require('./models/User.js');
 // var jwt = require('./services/jwt.js');
 var jwt = require('jwt-simple');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 var secret = 'haha...';
 
 var app = express();
 
 app.use(bodyParser.json());
+app.use(passport.initialize());
+
+passport.serializeUser(function(user, done) {
+	done(null, user.id);
+});
+
+var strategyOpts = {
+	usernameField: 'email'
+};
+var loginStrategy = new LocalStrategy(strategyOpts, function(email, password, done) {
+	User.findOne({
+		email: email
+	}, function(err, user) {
+		if (err) {
+			return done(err);
+		}
+
+		if (!user) {
+			return done(null, false, {
+				message: 'Wrong email/password' //not used in passport-strategy yet
+			});
+		}
+
+		user.comparePasswords(password, function(err, isMatch) {
+			if (err) {
+				return done(err);
+			}
+
+			if (!isMatch) {
+				return done(null, false, {
+					message: 'Wrong email/password'
+				});
+			}
+
+			done(null, user);
+		});
+	});
+});
+
+var registerStrategy = new LocalStrategy(strategyOpts, function(email, password, done) {
+	User.findOne({
+		email: email
+	}, function(err, user) {
+		if (err) {
+			return done(err);
+		}
+
+		if (user) {
+			return done(null, false, {
+				message: 'email already exists' //not used in passport-strategy yet
+			});
+		}
+
+		var newUser = new User({
+			email: email,
+			password: password
+		});
+
+		newUser.save(function(err) {
+			if (err) {
+				return done(err);
+			}
+			
+			done(null, newUser);
+		});
+	});
+});
+
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
 
 //enabling CORS
 app.use(function(req, res, next) {
@@ -33,48 +106,12 @@ function createSendToken(user, res) {
 	});
 }
 
-app.post('/register', function(req, res) {
-	var user = req.body;
-	var newUser = new User({
-		email: user.email,
-		password: user.password
-	});
-
-	newUser.save(function(err) {
-		createSendToken(newUser, res);
-	});
+app.post('/register', passport.authenticate('local-register'), function(req, res) {
+	createSendToken(req.user, res);
 });
 
-app.post('/login', function(req, res) {
-	req.user = req.body;
-
-	User.findOne({
-		email: req.user.email
-	}, function(err, user) {
-		if (err) {
-			throw err;
-		}
-
-		if (!user) {
-			return res.status(401).send({
-				message: 'Wrong email/password'
-			});
-		}
-
-		user.comparePasswords(req.user.password, function(err, isMatch) {
-			if (err) {
-				throw err;
-			}
-
-			if (!isMatch) {
-				return res.status(401).send({
-					message: 'Wrong email/password'
-				});
-			}
-
-			createSendToken(user, res);
-		});
-	});
+app.post('/login', passport.authenticate('local-login'), function(req, res) {
+	createSendToken(req.user, res);
 });
 
 var jobs = [

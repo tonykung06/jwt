@@ -15,8 +15,6 @@ UserSchema.methods.toJSON = function() {
 };
 
 UserSchema.methods.comparePasswords = function(password, callback) {
-	console.log(password, this.password);
-	
 	bcrypt.compare(password, this.password, callback);
 };
 
