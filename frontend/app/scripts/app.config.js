@@ -12,6 +12,10 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $ht
     url: '/register',
     templateUrl: '/views/register.html',
     controller: 'RegisterCtrl'
+  }).state('login', {
+    url: '/login',
+    templateUrl: '/views/login.html',
+    controller: 'LoginCtrl'
   }).state('logout', {
     url: '/register',
     controller: 'LogoutCtrl'

@@ -19,24 +19,60 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.post('/register', function(req, res) {
-	var user = req.body;
-	var newUser = new User.model({
-		email: user.email,
-		password: user.password
-	});
-
+function createSendToken(user, res) {
 	var payload = {
-		iss: req.hostname,
-		sub: newUser.id
+		// iss: req.hostname,
+		sub: user.id
 	};
 
 	var token = jwt.encode(payload, secret);
 
+	res.status(200).json({
+		user: user,
+		token: token
+	});
+}
+
+app.post('/register', function(req, res) {
+	var user = req.body;
+	var newUser = new User({
+		email: user.email,
+		password: user.password
+	});
+
 	newUser.save(function(err) {
-		res.status(200).json({
-			user: newUser,
-			token: token
+		createSendToken(newUser, res);
+	});
+});
+
+app.post('/login', function(req, res) {
+	req.user = req.body;
+
+	User.findOne({
+		email: req.user.email
+	}, function(err, user) {
+		if (err) {
+			throw err;
+		}
+
+		if (!user) {
+			return res.status(401).send({
+				message: 'Wrong email/password'
+			});
+		}
+
+		user.comparePasswords(req.user.password, function(err, isMatch) {
+			if (err) {
+				throw err;
+			}
+
+			if (!isMatch) {
+				return res.status(401).send({
+					message: 'Wrong email/password'
+				});
+			}
+
+			createSendToken(user, res);
 		});
 	});
 });
