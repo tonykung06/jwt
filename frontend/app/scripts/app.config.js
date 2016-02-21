@@ -1,4 +1,4 @@
-angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider) {
+angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $httpProvider) {
   $urlRouterProvider.otherwise('/');
 
   $stateProvider.state('main', {
@@ -16,4 +16,6 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider) {
     url: '/register',
     controller: 'LogoutCtrl'
   });
-});
+
+  $httpProvider.interceptors.push('authInterceptor');
+}).constant('API_URL', 'http://localhost:3000/');
