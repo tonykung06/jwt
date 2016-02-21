@@ -13,22 +13,29 @@ angular.module('jwtApp').factory('authToken', function ($window) {
 
   var storage = $window.localStorage;
   var cachedToken;
+  var userToken = 'userToken';
 
   // Public API here
-  return {
+  var authToken = {
     setToken: function(token) {
       cachedToken = token;
-      storage.setItem('userToken', token);
+      storage.setItem(userToken, token);
+    },
+    removeToken: function() {
+      cachedToken = null;
+      storage.removeItem(userToken);
     },
     getToken: function() {
       if (!cachedToken) {
-        cachedToken = storage.getItem('userToken');
+        cachedToken = storage.getItem(userToken);
       }
 
       return cachedToken;
     },
     isAuthenticated: function() {
-      return !!this.getToken();
+      return !!authToken.getToken();
     }
   };
+
+  return authToken;
 });

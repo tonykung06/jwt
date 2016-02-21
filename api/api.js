@@ -40,6 +40,17 @@ app.post('/register', function(req, res) {
 	});
 });
 
+var jobs = [
+	'Cook',
+	'SuperHero',
+	'Job3',
+	'Job4'
+];
+
+app.get('/jobs', function(req, res) {
+	res.json(jobs);
+});
+
 mongoose.connect('mongodb://localhost/jwt');
 
 var server = app.listen(3000, function() {
