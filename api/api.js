@@ -6,7 +6,7 @@ var User = require('./models/User.js');
 var jwt = require('jwt-simple');
 var passport = require('passport');
 var request = require('request');
-var config = require('./config.js');
+var config = require('./configs/server.config.js');
 var LocalStrategy = require('passport-local').Strategy;
 
 var secret = 'haha...';
