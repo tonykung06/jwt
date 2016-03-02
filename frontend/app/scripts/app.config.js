@@ -29,6 +29,11 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $ht
     url: API_URL + 'auth/google'
   });
 
+  $authProvider.facebook({
+    clientId: '1762039484026174',
+    url: API_URL + 'auth/facebook'
+  });
+
   $httpProvider.interceptors.push('authInterceptor');
 }).constant('API_URL', 'http://localhost:3000/').run(function($window) {
   var params = $window.location.search.substring(1);

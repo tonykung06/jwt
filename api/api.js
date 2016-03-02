@@ -1,16 +1,17 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var moment = require('moment');
 var User = require('./models/User.js');
 // var jwt = require('./services/jwt.js');
 var jwt = require('jwt-simple');
 var passport = require('passport');
 var request = require('request');
 var config = require('./configs/server.config.js');
+var facebookAuth = require('./services/facebookAuth.js');
 var LocalStrategy = require('passport-local').Strategy;
+var createSendToken = require('./helpers/createSendToken.js');
 
-var secret = 'haha...';
+var secret = config.tokenSecret;
 
 var app = express();
 
@@ -95,21 +96,6 @@ app.use(function(req, res, next) {
 	next();
 });
 
-function createSendToken(user, res) {
-	var payload = {
-		// iss: req.hostname,
-		sub: user.id,
-		exp: moment().add(10, 'days').unix()
-	};
-
-	var token = jwt.encode(payload, secret);
-
-	res.status(200).json({
-		user: user,
-		token: token
-	});
-}
-
 app.post('/register', passport.authenticate('local-register'), function(req, res) {
 	createSendToken(req.user, res);
 });
@@ -117,6 +103,8 @@ app.post('/register', passport.authenticate('local-register'), function(req, res
 app.post('/login', passport.authenticate('local-login'), function(req, res) {
 	createSendToken(req.user, res);
 });
+
+app.post('/auth/facebook', facebookAuth);
 
 var jobs = [
 	'Cook',
