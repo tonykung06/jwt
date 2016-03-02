@@ -8,4 +8,4 @@
  *
  * Main module of the application.
  */
-angular.module('jwtApp', ['ui.router', 'ngAnimate']);
+angular.module('jwtApp', ['ui.router', 'ngAnimate', 'satellizer']);

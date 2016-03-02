@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var moment = require('moment');
 var User = require('./models/User.js');
 // var jwt = require('./services/jwt.js');
 var jwt = require('jwt-simple');
@@ -97,7 +98,8 @@ app.use(function(req, res, next) {
 function createSendToken(user, res) {
 	var payload = {
 		// iss: req.hostname,
-		sub: user.id
+		sub: user.id,
+		exp: moment().add(10, 'days').unix()
 	};
 
 	var token = jwt.encode(payload, secret);

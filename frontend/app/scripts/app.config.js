@@ -1,4 +1,4 @@
-angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $httpProvider) {
+angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $httpProvider, $authProvider, API_URL) {
   $urlRouterProvider.otherwise('/');
 
   $stateProvider.state('main', {
@@ -19,6 +19,14 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $ht
   }).state('logout', {
     url: '/register',
     controller: 'LogoutCtrl'
+  });
+
+  $authProvider.loginUrl = API_URL + 'login';
+  $authProvider.signupUrl = API_URL + 'register';
+
+  $authProvider.google({
+    clientId: '1028235431595-5sadnj969clrtvh9doio7eab8sk9i9c2.apps.googleusercontent.com',
+    url: API_URL + 'auth/google'
   });
 
   $httpProvider.interceptors.push('authInterceptor');
