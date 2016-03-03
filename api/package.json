@@ -16,9 +16,12 @@
     "jwt-simple": "^0.4.1",
     "moment": "^2.11.2",
     "mongoose": "^4.4.4",
+    "nodemailer": "^2.3.0",
+    "nodemailer-smtp-transport": "^2.4.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "querystring": "^0.2.0",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "underscore": "^1.8.3"
   }
 }
