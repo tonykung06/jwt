@@ -23,7 +23,14 @@ angular.module('jwtApp').controller('LoginCtrl', function($scope, $state, alert,
       email: $scope.email,
       password: $scope.password
     }).then(function(res) {
-      alert('success', 'Welcome', 'Thanks for coming back ' + res.data.user.email + '!');
+      var user = res.data.user;
+      var message = 'Thanks for coming back ' + user.email + '!';
+
+      if (!user.active) {
+        message = 'Just a reminder, please email activate your account';
+      }
+
+      alert('success', 'Welcome', message);
       $state.go('main');
     }).catch(handleAuthError);
   };

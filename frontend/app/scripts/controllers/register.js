@@ -22,7 +22,7 @@ angular.module('jwtApp').controller('RegisterCtrl', function ($scope, $rootScope
       password: $scope.password
     }).then(function(res) {
       $auth.setToken(res.data.token);
-      alert('success', 'Account Created!', 'Welcome, ' + res.data.user.email + '!');
+      alert('success', 'Account Created!', 'Welcome, ' + res.data.user.email + '! Please email activate your account.');
       $state.go('main');
     }).catch(function(err) {
       alert('warning', 'Opps!', err.message || 'Could not register');

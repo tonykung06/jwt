@@ -4,6 +4,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
+var User = require('../models/User.js');
 
 var defaultModel = {
 	verifyUrl: 'http://localhost:3000/auth/verifyEmail?token=',
@@ -18,7 +19,7 @@ _.templateSettings = {
 
 var secret = config.emailSecret;
 
-function getHtml(token) {
+var getHtml = function (token) {
 	var path = './views/emailVerification.html';
 	var html = fs.readFileSync(path, encoding = 'utf8');
 	var template = _.template(html);
@@ -27,6 +28,12 @@ function getHtml(token) {
 	model.verifyUrl += token;
 
 	return template(model);
+};
+
+var handleError = function(res) {
+	return res.status(401).send({
+		message: 'Authentication has failed'
+	});
 };
 
 exports.send = function(email, res) {
@@ -51,5 +58,40 @@ exports.send = function(email, res) {
 		}
 
 		console.log('email sent', info);
+	});
+};
+
+exports.handler = function(req, res) {
+	var token = req.query.token;
+	var payload = jwt.decode(token, secret);
+	var email = payload.sub;
+
+	if (!email) {
+		return handleError(res);
+	}
+
+	User.findOne({
+		email: email
+	}, function(err, foundUser) {
+		if (err) {
+			return res.status(500);
+		}
+
+		if (!foundUser) {
+			return handleError(res);
+		}
+
+		if (!foundUser.active) {
+			foundUser.active = true;
+		}
+
+		foundUser.save(function(err) {
+			if (err) {
+				return res.status(500);
+			}
+
+			return res.redirect(config.appUrl);
+		});
+
 	});
 };
