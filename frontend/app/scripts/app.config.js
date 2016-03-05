@@ -21,8 +21,8 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $ht
     controller: 'LogoutCtrl'
   });
 
-  $authProvider.loginUrl = API_URL + 'login';
-  $authProvider.signupUrl = API_URL + 'register';
+  $authProvider.loginUrl = API_URL + 'auth/login';
+  $authProvider.signupUrl = API_URL + 'auth/register';
 
   $authProvider.google({
     clientId: '1028235431595-5sadnj969clrtvh9doio7eab8sk9i9c2.apps.googleusercontent.com',
@@ -35,7 +35,7 @@ angular.module('jwtApp').config(function($urlRouterProvider, $stateProvider, $ht
   });
 
   $httpProvider.interceptors.push('authInterceptor');
-}).constant('API_URL', 'http://localhost:3000/').run(function($window) {
+}).constant('API_URL', 'http://localhost:1337/').run(function($window) {
   var params = $window.location.search.substring(1);
   var pair;
   var code;
